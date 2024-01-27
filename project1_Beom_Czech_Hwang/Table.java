@@ -186,13 +186,16 @@ public class Table
      */
     public Table select(KeyType keyVal) {
         out.println("RA> " + name + ".select (" + keyVal + ")");
-
+    
         List<Comparable[]> rows = new ArrayList<>();
-
-        // T O B E I M P L E M E N T E D
-
+    
+        if (index.containsKey(keyVal)) {
+            rows.add(index.get(keyVal)); 
+        }
+    
         return new Table(name + count++, attribute, domain, key, rows);
-    } // select
+    }
+    
 
     /************************************************************************************
      * Union this table and table2. Check that the two tables are compatible.
