@@ -1,3 +1,5 @@
-# Database_Management
+# # Database_Management
 
-### Group: Jun Beom, Brandon Czech, Wonjoon Hwang
+## * Group:
+
+💻Jun Beom, 💻Brandon Czech,💻 Wonjoon Hwang
