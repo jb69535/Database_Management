@@ -151,10 +151,10 @@ public class Table
         List<Comparable[]> rows = new ArrayList<>();
 
         for (int i = 0; i < this.tuples.size(); i++) {
-            Comparable[] tuple = this.tuples.get(i);
-            Comparable[] tempTuple = extract(tuple, attrs);
-            rows.add(tempTuple);
-        }
+            Comparable[] tuple = this.tuples.get(i); // Retrieves the ith tuple.
+            Comparable[] tempTuple = extract(tuple, attrs); // Create tempTuple containing only the attrs.
+            rows.add(tempTuple); // Add tempTuple to the rows list.
+        } // for
 
         return new Table(name + count++, attrs, colDomain, newKey, rows);
     } // project
@@ -186,13 +186,18 @@ public class Table
      */
     public Table select(KeyType keyVal) {
         out.println("RA> " + name + ".select (" + keyVal + ")");
-
+    
         List<Comparable[]> rows = new ArrayList<>();
+    
+        Comparable[] tuple = index.getOrDefault(keyVal, null); // getOrDefault from Map.class
 
-        // T O B E I M P L E M E N T E D
-
+        if (tuple != null) {
+            rows.add(tuple);
+        } // Condition that prevents adding null.
+    
         return new Table(name + count++, attribute, domain, key, rows);
-    } // select
+    } // select with given key.
+    
 
     /************************************************************************************
      * Union this table and table2. Check that the two tables are compatible.
