@@ -241,84 +241,94 @@ public class Table
     } // minus
 
     /************************************************************************************
-     * Join this table and table2 by performing an "equi-join". Tuples from both
-     * tables
-     * are compared requiring attributes1 to equal attributes2. Disambiguate
-     * attribute
+     * Join this table and table2 by performing an "equi-join".  Tuples from both tables
+     * are compared requiring attributes1 to equal attributes2.  Disambiguate attribute
      * names by append "2" to the end of any duplicate attribute name.
      *
      * #usage movie.join ("studioNo", "name", studio)
      * @author Wonjoon Hwang
-     * @param attribute1 the attributes of this table to be compared (Foreign Key)
-     * @param attribute2 the attributes of table2 to be compared (Primary Key)
-     * @param table2     the rhs table in the join operation
-     * @return a table with tuples satisfying the equality predicate
+     * @param attribute1  the attributes of this table to be compared (Foreign Key)
+     * @param attribute2  the attributes of table2 to be compared (Primary Key)
+     * @param table2      the rhs table in the join operation
+     * @return  a table with tuples satisfying the equality predicate
      */
-    public Table join(String attributes1, String attributes2, Table table2) {
-        out.println("RA> " + name + ".join (" + attributes1 + ", " + attributes2 + ", "
-                + table2.name + ")");
+    public Table join (String attributes1, String attributes2, Table table2)
+    {
+        out.println ("RA> " + name + ".join (" + attributes1 + ", " + attributes2 + ", "
+                                               + table2.name + ")");
 
-        String[] t_attrs = attributes1.split(" ");
-        String[] u_attrs = attributes2.split(" ");
+        String [] t_attrs = attributes1.split (" ");
+        String [] u_attrs = attributes2.split (" ");
 
-        List<Comparable[]> rows = new ArrayList<>();
+        List <Comparable []> rows = new ArrayList <> ();
 
-        // T O B E I M P L E M E N T E D BY WONJOON HWANG
-        this.tuples.stream().forEach((t1_tuple) -> {
-            table2.tuples.stream().filter((t2_tuple) -> {
-                // remove tuples where primary key != foreign key
-                for(int i = 0; i < t_attrs.length; i++){
-                    Comparable foreign_key = t1_tuple[this.col(t_attrs[i])];
-                    Comparable primary_key = t2_tuple[table2.col(u_attrs[i])];
-                    if(!primary_key.equals(foreign_key)){
-                        return false;
+        //  T O   B E   I M P L E M E N T E D BY WONJOON HWANG
+        
+        for (Comparable[] t1_tuple : this.tuples) {
+            for (Comparable[] t2_tuple : table2.tuples) {
+                boolean match = true;
+                for (int i = 0; i < t_attrs.length; i++) {
+                    Comparable key1 = t1_tuple[this.col(t_attrs[i])];
+                    Comparable key2 = t2_tuple[table2.col(u_attrs[i])];
+                    if (!key1.equals(key2)) {
+                        match = false;
+                        break;
                     }
                 }
-                return true;
-            }).forEach((t2_tuple) -> {
-                rows.add(ArrayUtil.concat(t1_tuple, t2_tuple));
-            });
-        
-        });
+                if (match) {
+                    rows.add(ArrayUtil.concat(t1_tuple, t2_tuple));
+                }
+            }
+        }
 
-        //appending 2 onto the duplicate attribute names
-        String[] newAttributes = table2.attribute;
-        for(int i = 0; i < this.attribute.length; i++){
-            for(int j = 0; j< table2.attribute.length; j++){
-                if(this.attribute[i].equals(table2.attribute[j])){
+        String[] newAttributes = Arrays.copyOf(table2.attribute, table2.attribute.length);
+        for (int i = 0; i < this.attribute.length; i++) {
+            for (int j = 0; j < table2.attribute.length; j++) {
+                if (this.attribute[i].equals(table2.attribute[j])) {
                     newAttributes[j] = table2.attribute[j] + "2";
                 }
             }
         }
 
-        return new Table(name + count++, ArrayUtil.concat(attribute, table2.attribute),
-                ArrayUtil.concat(domain, table2.domain), key, rows);
+        
+        return new Table (name + count++, ArrayUtil.concat (attribute, table2.attribute),
+                                          ArrayUtil.concat (domain, table2.domain), key, rows);
     } // join
 
     /************************************************************************************
-     * Join this table and table2 by performing an "natural join". Tuples from both
-     * tables
-     * are compared requiring common attributes to be equal. The duplicate column is
-     * also
+     * Join this table and table2 by performing an "natural join".  Tuples from both tables
+     * are compared requiring common attributes to be equal.  The duplicate column is also
      * eliminated.
      *
      * #usage movieStar.join (starsIn)
      * @author Wonjoon Hwang
-     * @param table2 the rhs table in the join operation
-     * @return a table with tuples satisfying the equality predicate
+     * @param table2  the rhs table in the join operation
+     * @return  a table with tuples satisfying the equality predicate
      */
-    public Table join(Table table2) {
-        out.println("RA> " + name + ".join (" + table2.name + ")");
+    public Table join (Table table2)
+    {
+        out.println ("RA> " + name + ".join (" + table2.name + ")");
 
-        List<Comparable[]> rows = new ArrayList<>();
+        List <Comparable []> rows = new ArrayList <> ();
 
-        // T O B E I M P L E M E N T E D BY WONJOON HWANG
+        //  T O   B E   I M P L E M E N T E D BY WONJOON HWANG
+        Set<String> thisAttributes = new HashSet<>(Arrays.asList(this.attribute));
+        Set<String> table2Attributes = new HashSet<>(Arrays.asList(table2.attribute));
 
+        Set<String> duplicates = new HashSet<>(thisAttributes);
+        duplicates.retainAll(table2Attributes);
+
+        Set<String> uniqueAttributes = new HashSet<>(thisAttributes);
+        uniqueAttributes.addAll(table2Attributes);
+        uniqueAttributes.removeAll(duplicates);
+
+        String joinAttributes = String.join(" ", duplicates);
+        String projectAttributes = String.join(" ", uniqueAttributes);
+        
         // FIX - eliminate duplicate columns
-        return new Table(name + count++, ArrayUtil.concat(attribute, table2.attribute),
-                ArrayUtil.concat(domain, table2.domain), key, rows);
+        return this.join(joinAttributes, joinAttributes, table2).project(joinAttributes + " " + projectAttributes);
     } // join
-
+                
     /************************************************************************************
      * Return the column position for the given attribute name.
      *
