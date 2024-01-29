@@ -295,7 +295,7 @@ public class Table
                                           ArrayUtil.concat (domain, table2.domain), key, rows);
     } // join
 
-    /************************************************************************************
+     /************************************************************************************
      * Join this table and table2 by performing an "natural join".  Tuples from both tables
      * are compared requiring common attributes to be equal.  The duplicate column is also
      * eliminated.
@@ -312,21 +312,59 @@ public class Table
         List <Comparable []> rows = new ArrayList <> ();
 
         //  T O   B E   I M P L E M E N T E D BY WONJOON HWANG
-        Set<String> thisAttributes = new HashSet<>(Arrays.asList(this.attribute));
-        Set<String> table2Attributes = new HashSet<>(Arrays.asList(table2.attribute));
+        List<String> commonAttrs = new ArrayList<>();
+        for (String attr1 : this.attribute) {
+            for (String attr2 : table2.attribute) {
+                if (attr1.equals(attr2)) {
+                    commonAttrs.add(attr1);
+                    break;
+                }
+            }
+        }
 
-        Set<String> duplicates = new HashSet<>(thisAttributes);
-        duplicates.retainAll(table2Attributes);
+        List<String> newAttrs = new ArrayList<>(Arrays.asList(this.attribute));
+        List<Class> newDomains = new ArrayList<>(Arrays.asList(this.domain));
 
-        Set<String> uniqueAttributes = new HashSet<>(thisAttributes);
-        uniqueAttributes.addAll(table2Attributes);
-        uniqueAttributes.removeAll(duplicates);
+        for (int i = 0; i < table2.attribute.length; i++) {
+            if (!commonAttrs.contains(table2.attribute[i])) {
+                newAttrs.add(table2.attribute[i]);
+                newDomains.add(table2.domain[i]);
+            }
+        }
 
-        String joinAttributes = String.join(" ", duplicates);
-        String projectAttributes = String.join(" ", uniqueAttributes);
+        List<Comparable[]> newTuples = new ArrayList<>();
+        for (Comparable[] tup1 : this.tuples) {
+            for (Comparable[] tup2 : table2.tuples) {
+                boolean match = true;
+                for (String commonAttr : commonAttrs) {
+                    int col1 = this.col(commonAttr);
+                    int col2 = table2.col(commonAttr);
+                    if (!tup1[col1].equals(tup2[col2])) {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match) {
+                    Comparable[] newTuple = new Comparable[newAttrs.size()];
+                    int newIndex = 0;
+                    for (Comparable field : tup1) {
+                        newTuple[newIndex++] = field;
+                    }
+                    for (int i = 0; i < tup2.length; i++) {
+                        if (!commonAttrs.contains(table2.attribute[i])) {
+                            newTuple[newIndex++] = tup2[i];
+                        }
+                    }
+                    newTuples.add(newTuple);
+                }
+            }
+        }
+
+        String[] newAttrArray = newAttrs.toArray(new String[0]);
+        Class[] newDomainArray = newDomains.toArray(new Class[0]);
         
-        // FIX - eliminate duplicate columns
-        return this.join(joinAttributes, joinAttributes, table2).project(joinAttributes + " " + projectAttributes);
+        // FIXED - eliminate duplicate columns
+        return new Table(name + count++, newAttrArray, newDomainArray, key, newTuples);
     } // join
                 
     /************************************************************************************
