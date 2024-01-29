@@ -2,7 +2,9 @@
 
 ## * Group:
 
-💻Jun Beom, 💻Brandon Czech,💻 Wonjoon Hwang
+💻Jun Beom(Project, Select, Typecheck, Makefile), 
+💻Brandon Czech(Union, Minus),
+💻 Wonjoon Hwang(Join, Doc)
 
 ## * How to Compile, Run, Clean:
 
