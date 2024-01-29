@@ -248,7 +248,7 @@ public class Table
      * names by append "2" to the end of any duplicate attribute name.
      *
      * #usage movie.join ("studioNo", "name", studio)
-     *
+     * @author Wonjoon Hwang
      * @param attribute1 the attributes of this table to be compared (Foreign Key)
      * @param attribute2 the attributes of table2 to be compared (Primary Key)
      * @param table2     the rhs table in the join operation
@@ -263,7 +263,33 @@ public class Table
 
         List<Comparable[]> rows = new ArrayList<>();
 
-        // T O B E I M P L E M E N T E D
+        // T O B E I M P L E M E N T E D BY WONJOON HWANG
+        this.tuples.stream().forEach((t1_tuple) -> {
+            table2.tuples.stream().filter((t2_tuple) -> {
+                // remove tuples where primary key != foreign key
+                for(int i = 0; i < t_attrs.length; i++){
+                    Comparable foreign_key = t1_tuple[this.col(t_attrs[i])];
+                    Comparable primary_key = t2_tuple[table2.col(u_attrs[i])];
+                    if(!primary_key.equals(foreign_key)){
+                        return false;
+                    }
+                }
+                return true;
+            }).forEach((t2_tuple) -> {
+                rows.add(ArrayUtil.concat(t1_tuple, t2_tuple));
+            });
+        
+        });
+
+        //appending 2 onto the duplicate attribute names
+        String[] newAttributes = table2.attribute;
+        for(int i = 0; i < this.attribute.length; i++){
+            for(int j = 0; j< table2.attribute.length; j++){
+                if(this.attribute[i].equals(table2.attribute[j])){
+                    newAttributes[j] = table2.attribute[j] + "2";
+                }
+            }
+        }
 
         return new Table(name + count++, ArrayUtil.concat(attribute, table2.attribute),
                 ArrayUtil.concat(domain, table2.domain), key, rows);
@@ -277,7 +303,7 @@ public class Table
      * eliminated.
      *
      * #usage movieStar.join (starsIn)
-     *
+     * @author Wonjoon Hwang
      * @param table2 the rhs table in the join operation
      * @return a table with tuples satisfying the equality predicate
      */
@@ -286,7 +312,7 @@ public class Table
 
         List<Comparable[]> rows = new ArrayList<>();
 
-        // T O B E I M P L E M E N T E D
+        // T O B E I M P L E M E N T E D BY WONJOON HWANG
 
         // FIX - eliminate duplicate columns
         return new Table(name + count++, ArrayUtil.concat(attribute, table2.attribute),
