@@ -215,7 +215,18 @@ public class Table
         List<Comparable[]> rows = new ArrayList<>();
 
         // T O B E I M P L E M E N T E D
-
+            
+        for (Comparable[] t2Tuple : table2.tuples) {
+            boolean exists = false;
+            for (Comparable[] t1Tuple : this.tuples) {
+                if (Arrays.deepEquals(t1Tuple, t2Tuple)) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists) rows.add(t2Tuple);
+        }
+            
         return new Table(name + count++, attribute, domain, key, rows);
     } // union
 
@@ -236,7 +247,18 @@ public class Table
         List<Comparable[]> rows = new ArrayList<>();
 
         // T O B E I M P L E M E N T E D
-
+            
+        for (Comparable[] t1Tuple : this.tuples) {
+            boolean unique = true;
+            for (Comparable[] t2Tuple : table2.tuples) {
+                if (Arrays.deepEquals(t1Tuple, t2Tuple)) {
+                    unique = false;
+                    break;
+                }
+            }
+            if (unique) rows.add(t1Tuple);
+        }
+            
         return new Table(name + count++, attribute, domain, key, rows);
     } // minus
 
