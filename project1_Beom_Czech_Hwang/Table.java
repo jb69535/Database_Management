@@ -194,6 +194,7 @@ public class Table
         if (tuple != null) {
             rows.add(tuple);
         } // Condition that prevents adding null.
+        // test for pulling.
     
         return new Table(name + count++, attribute, domain, key, rows);
     } // select with given key.
