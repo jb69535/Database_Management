@@ -205,6 +205,7 @@ public class Table
      *
      * #usage movie.union (show)
      *
+     * @author Brandon Czech
      * @param table2 the rhs table in the union operation
      * @return a table representing the union
      */
@@ -213,9 +214,28 @@ public class Table
         if (!compatible(table2))
             return null;
 
+        // stores the tuples of the table resulting from union operation
         List<Comparable[]> rows = new ArrayList<>();
 
-        // T O B E I M P L E M E N T E D
+        // adds tuples from current table to the union list
+        for (Comparable[] tuple : this.tuples) {
+            rows.add(tuple);
+        } 
+        // iterate through each tuple in table 2
+        for (Comparable[] tuple2 : table2.tuples) { // for each row in table 2
+            boolean foundDup = false;
+            for (Comparable[] existingTuple : rows) { // for each row in the union table
+                // if the current row from the union table is equal to the current row from table 2, break the loop
+                if (Arrays.equals(existingTuple, tuple2)) { 
+                    foundDup = true;
+                    break;
+                } // if
+            } // for
+            // if the row isn't a duplicate, add it to the union table
+            if(foundDup == false) {
+                rows.add(tuple2);
+            } // if
+        } // for
 
         return new Table(name + count++, attribute, domain, key, rows);
     } // union
@@ -226,6 +246,7 @@ public class Table
      *
      * #usage movie.minus (show)
      *
+     * @author Brandon Czech
      * @param table2 The rhs table in the minus operation
      * @return a table representing the difference
      */
@@ -236,8 +257,21 @@ public class Table
 
         List<Comparable[]> rows = new ArrayList<>();
 
-        // T O B E I M P L E M E N T E D
-
+        // adds rows from current table to the new table after minus operation
+        for (Comparable[] tuple : this.tuples) {
+            rows.add(tuple);
+        } 
+        // for every tuple in table 2
+        for (Comparable[] tuple2 : table2.tuples) {
+            // for every tuple in the new table
+            for (Comparable[] existingTuple : rows) {
+                // if the current tuple from new table is equal to the current tuple from table 2
+                if (Arrays.equals(existingTuple, tuple2)) {
+                    rows.remove(tuple2);
+                    break;
+                } // if
+            } // for
+        } // for
         return new Table(name + count++, attribute, domain, key, rows);
     } // minus
 
