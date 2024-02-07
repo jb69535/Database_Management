@@ -216,7 +216,6 @@ public class Table
         // stores the tuples of the table resulting from union operation
         List<Comparable[]> rows = new ArrayList<>();
 
-        // T O B E I M P L E M E N T E D
         // adds tuples from current table to the union list
         for (Comparable[] tuple : this.tuples) {
             rows.add(tuple);
@@ -257,8 +256,21 @@ public class Table
 
         List<Comparable[]> rows = new ArrayList<>();
 
-        // T O B E I M P L E M E N T E D
-
+        // adds rows from current table to the new table after minus operation
+        for (Comparable[] tuple : this.tuples) {
+            rows.add(tuple);
+        } 
+        // for every tuple in table 2
+        for (Comparable[] tuple2 : table2.tuples) {
+            // for every tuple in the new table
+            for (Comparable[] existingTuple : rows) {
+                // if the current tuple from new table is equal to the current tuple from table 2
+                if (Arrays.equals(existingTuple, tuple2)) {
+                    rows.remove(tuple2);
+                    break;
+                } // if
+            } // for
+        } // for
         return new Table(name + count++, attribute, domain, key, rows);
     } // minus
 
