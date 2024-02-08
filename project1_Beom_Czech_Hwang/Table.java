@@ -179,6 +179,10 @@ public class Table
      * Select the tuples satisfying the given key predicate (key = value). Use an
      * index
      * (Map) to retrieve the tuple with the given key value.
+     * 
+     * 
+     * If the keyVal matches, add rows.
+     * If it doesn't match, put defaultValue(Null), and println error code.
      *
      * @author Jun Beom
      * @param keyVal the given key value
@@ -189,12 +193,21 @@ public class Table
     
         List<Comparable[]> rows = new ArrayList<>();
     
-        Comparable[] tuple = index.getOrDefault(keyVal, null); // getOrDefault from Map.class
+        // Comparable[] tuple = index.get(keyVal); // 
 
-        if (tuple != null) {
-            rows.add(tuple);
-        } // Condition that prevents adding null.
-        // test for pulling.
+        // if (tuple != null) {
+        //     rows.add(tuple);
+        // } else {
+        //     System.err.println();
+        // }
+        Comparable[] defaultValue = null; // DefaultValue
+        Comparable[] tuple = index.getOrDefault(keyVal, defaultValue); 
+
+        if (tuple != defaultValue) {
+            rows.add(tuple); // Add rows.
+        } else {
+            System.err.println("No tuples found that matches keyVal: " + keyVal);
+        } // If nothing matches.
     
         return new Table(name + count++, attribute, domain, key, rows);
     } // select with given key.
