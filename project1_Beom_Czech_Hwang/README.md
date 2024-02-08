@@ -2,7 +2,7 @@
 
 ## * Group:
 
-💻Jun Beom(Project, Select, Typecheck, Makefile),
+💻Jun Beom(Project, Select, Makefile),
 💻Brandon Czech(Union, Minus),
 💻 Wonjoon Hwang(Join, Doc)
 
