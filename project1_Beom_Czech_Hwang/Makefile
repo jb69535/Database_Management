@@ -7,7 +7,7 @@ BIN_DIR = bin
 # Library directory for JAR files
 LIB_DIR = lib
 # Main class for running the program
-MAIN_CLASS = App
+MAIN_CLASS = MovieDB
 
 # Compile all Java files in the current directory
 cl:
