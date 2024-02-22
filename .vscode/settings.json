@@ -1,6 +1,10 @@
 {
     "java.project.referencedLibraries": [
-      "project2_Beom_Czech_Hwang/lib/**/*.jar"
+      "project2_beom_czech_hwang/lib/**/*.jar"
+    ],
+    "cSpell.words": [
+      "beom",
+      "hwang"
     ]
   }
   
